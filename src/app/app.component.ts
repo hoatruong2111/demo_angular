@@ -1,4 +1,6 @@
+import { authConfig } from './sso.config';
 import { Component } from '@angular/core';
+import { JwksValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 
 @Component({
   selector: 'app-root',
@@ -8,11 +10,21 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'demo-app';
 
-  login() {
-
+  constructor(private oauthService: OAuthService) {
+    this.configureSingleSignOn();
   }
 
-  logout() {
+  configureSingleSignOn() {
+    debugger
+    this.oauthService.configure(authConfig);
+    this.oauthService.tokenValidationHandler = new JwksValidationHandler();
+    this.oauthService.loadDiscoveryDocumentAndLogin();
+  }
+  //max
+  //geheim
 
+  get token() {
+    let claims: any = this.oauthService.getIdentityClaims();
+    return claims ? claims : null;
   }
 }
