@@ -15,7 +15,6 @@ export class AppComponent {
   }
 
   configureSingleSignOn() {
-    debugger
     this.oauthService.configure(authConfig);
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
     this.oauthService.loadDiscoveryDocumentAndLogin();
@@ -26,5 +25,9 @@ export class AppComponent {
   get token() {
     let claims: any = this.oauthService.getIdentityClaims();
     return claims ? claims : null;
+  }
+
+  logout() {
+    this.oauthService.logOut();
   }
 }
