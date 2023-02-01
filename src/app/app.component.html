@@ -1,1 +1,2 @@
-<div id="chart" style="height: 90vh;" ></div>
+<router-outlet *ngIf="token"></router-outlet>
+<button *ngIf="token" (click)="logout()">Logout</button>
