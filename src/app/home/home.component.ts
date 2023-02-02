@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as echarts from 'echarts';
+import { SocketServiceService } from '../services/socket-service.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -7,36 +8,39 @@ import * as echarts from 'echarts';
 })
 export class HomeComponent implements OnInit {
   private data: any = [];
-  private now = new Date(1997, 9, 3);
-  private oneDay = 24 * 3600 * 1000;
-  private value = Math.random() * 1000; 
   private option: echarts.EChartsOption | undefined
   private myChart: any;
-  
-  ngOnInit() {
-    setInterval(() => {
-      for (let i = 0; i < 20; i++) {
-        this.data.shift();
-        this.data.push(this.randomData());
-      }
-      this.InitPipe();
-      this.myChart.setOption(this.option);
-    }, 500);
-    for (let i = 0; i < 1000; i++) {  
-      this.data.push(this.randomData());
-    }
+  dataList: any;
+  constructor(private socketService: SocketServiceService){
+    
   }
 
-  private randomData() : any {
-    this.now = new Date(+this.now + this.oneDay);
-    this.value = this.value + Math.random() * 20 - 10;
-    return {
-      name: this.now.toString(),
-      value: [
-        [this.now.getFullYear(), this.now.getMonth() + 1, this.now.getDate()].join('/'),
-        Math.round(this.value)
-      ]
-    };
+  ngOnInit() {
+   
+    this.socketService.socket.on("getData", (data: any) => {
+      this.dataList = data;
+      console.log(this.dataList)
+    })
+
+    this.socketService.socket.on("getDataInChart", (response: any) => {
+      this.data = [];
+      this.data =  response;
+      this.InitPipe();
+      this.myChart.setOption(this.option);
+      console.log(this.data)
+    })
+  }
+
+  addID(): void{
+    const newItem = {
+      id: crypto.randomUUID()
+    } 
+
+    this.socketService.socket.emit("addID", newItem)
+  }
+
+  deleteID(id: string): void{
+    this.socketService.socket.emit("deleteID", id)
   }
 
   private InitPipe(): void {
