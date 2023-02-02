@@ -1,2 +1,11 @@
-<router-outlet *ngIf="token"></router-outlet>
-<button *ngIf="token" (click)="logout()">Logout</button>
+<router-outlet *ngIf="token || isLoggedin"></router-outlet>
+<button style="margin-right: 10px" *ngIf="!isLoggedin &&  !token" (click)="login()">Login</button>
+<button *ngIf="token || isLoggedin" (click)="logout()">Logout</button>
+<button style="
+        background: #4267b2;
+        border-radius: 5px;
+        color: white;
+        height: 25px;
+        text-align: center;
+        width: 250px;" *ngIf="!isLoggedin && !token" (click)="loginWithFacebook();">Login with Facebook
+</button>
